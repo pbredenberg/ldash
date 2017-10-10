@@ -18,6 +18,15 @@ URI='$uri'
 ARGS='$args'
 DOCUMENT_ROOT='$document_root'
 FASTCGI_SCRIPT_NAME='$fastcgi_script_name'
+PHP_FPM_PATH='/var/run/php5-fpm.sock'
+
+prompt "Are you using PHP 7.0? (Default is PHP 5. This setting tells nginx where to look for FPM)"
+
+read -r -p "[y/N] " response
+if [[ $response =~ ^([yY][eE][sS]|[yY])$ ]]
+then
+    PHP_FPM_PATH='/var/run/php/php7.0-fpm.sock'
+fi
 
 prompt "Do you need to specify a user and group to own this site's files? (default - $web_user:$web_group)"
 
@@ -64,7 +73,7 @@ server {
         location ~ \.php$ {
             try_files $URI =404;
             fastcgi_split_path_info ^(.+\.php)(/.+)$;
-            fastcgi_pass unix:/var/run/php5-fpm.sock;
+            fastcgi_pass unix:$PHP_FPM_PATH;
             fastcgi_index index.php;
             fastcgi_param SCRIPT_FILENAME $DOCUMENT_ROOT$FASTCGI_SCRIPT_NAME;
             include fastcgi_params;
