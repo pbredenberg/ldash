@@ -3,17 +3,62 @@
 # Must be run with sudo priviliges
 
 # Functions
-. library/functions
+. ./library/fn_echo
 
 # Variables
+
+MSG_VHOST_TEMPLATE="This will be used in your virtual host templates."
+NGINX_PATH="/etc/nginx"
+FPM_SOCK_PATH="/var/run/php5-fpm.sock"
+
+mkdir -p support
+
+echo "Just a few questions..."
+
+prompt "Is your nginx installed somewhere other than $NGINX_PATH ...?"
+echo $MSG_VHOST_TEMPLATE
+
+read -r -p "[y/N] " response
+if [[ $response =~ ^([yY][eE][sS]|[yY])$ ]]
+then
+	read -r -p "What is the path to your install of NGINX? (default: $NGINX_PATH)? " response_nginx
+    NGINX_PATH=$response_nginx
+fi
+
+cat > ./support/nginx.setting << EOF
+#!/bin/bash
+NGINX_PATH=$NGINX_PATH
+EOF
+
+echo "NGINX path set as $NGINX_PATH"
+
+prompt "Would you like to specify where nginx should listen for PHP-FPM? (unix/tcp? Default is $FPM_SOCK_PATH) ...?"
+echo "More info: https://www.nginx.com/resources/wiki/start/topics/examples/phpfcgi/#connecting-nginx-to-php-fpm"
+echo $MSG_VHOST_TEMPLATE
+
+read -r -p "[y/N] " response
+if [[ $response =~ ^([yY][eE][sS]|[yY])$ ]]
+then
+	read -r -p "What is the path to set for your PHP-FPM listen directive? (default: $FPM_SOCK_PATH)? " response_phpfpm
+    FPM_SOCK_PATH=$response_phpfpm
+fi
+
+cat > ./support/php-fpm.setting << EOF
+#!/bin/bash
+FPM_SOCK_PATH=$FPM_SOCK_PATH
+EOF
+
+
+echo "PHP-FPM listen directives will be set to: $FPM_SOCK_PATH"
 
 # Check dependencies for mission critical stuff
 type zip >/dev/null 2>&1 || echo "The package 'zip' is not installed on your system, so installing..." && apt-get install zip
 
 # Copy all the things into /bin and /opt
-mkdir -p /opt/lempdash/tasks
+mkdir -p /opt/lempdash
 cp -R tasks /opt/lempdash
 cp -R library /opt/lempdash
+cp -R support /opt/lempdash
 cp lempdash /bin/ldash
 
 # Make task scripts executlable

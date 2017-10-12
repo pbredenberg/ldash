@@ -25,6 +25,7 @@ cat /opt/lempdash/library/graphics/theend.txt
 echo
 
 # Remove all the things from /bin and /opt
+rm -rf ./support
 rm -rf /opt/lempdash
 rm /bin/ldash
 

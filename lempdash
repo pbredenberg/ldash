@@ -9,6 +9,10 @@ dontf="don't forget to "
 avail_ops="site, db"
 hint_top="Acceptable arguments: cr, rm, bu, ls"
 
+CURRENT_OS=$(get_platform)
+
+echo "Current OS is $CURRENT_OS"
+
 if [ $# -eq 0 ]; then
 	cat /opt/lempdash/library/graphics/lempdash.txt
 	echo
@@ -101,7 +105,7 @@ elif [ $1 = "ls" ]; then
 		ok "Here's all the backup directories I can see:"
 		/opt/lempdash/tasks/utilities/listbackups
 	fi
-# CREATION OPERATIONS
+# REDIRECT CREATION OPERATIONS
 elif [ $1 = "rd" ]; then
 	if [ -z "$2" ]; then
 		die "$addressee$dontf specify redirect operation: ldash rd OriginalSite.com SiteToPointTo.com"

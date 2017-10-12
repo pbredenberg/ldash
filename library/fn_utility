@@ -1,0 +1,11 @@
+#!/bin/bash
+
+function get_platform {
+    SYS_OS=$OSTYPE
+    if [[ $OSTYPE == darwin* ]]; then
+        SYS_OS='darwn'
+    elif [[ $OSTYPE == linux* ]]; then
+        SYS_OS='linux'
+    fi
+    echo -e $SYS_OS
+}
